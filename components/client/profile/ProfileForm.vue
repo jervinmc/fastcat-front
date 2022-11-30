@@ -1,5 +1,107 @@
 <template>
   <div>
+    <VueHtml2pdf
+      :show-layout="false"
+      :float-layout="true"
+      :enable-download="true"
+      :paginate-elements-by-height="1400"
+      filename="myPDF"
+      :pdf-quality="2"
+      :manual-pagination="false"
+      pdf-format="a4"
+      pdf-orientation="landscape"
+      pdf-content-width="800px"
+      ref="html2Pdf"
+    >
+      <section slot="pdf-content">
+        <v-row>
+          <v-col>
+            <v-row>
+              <v-divider></v-divider>
+              <v-col align="center">
+                <div class="text-h4">Ship Ticket</div>
+              </v-col>
+            </v-row>
+
+            <v-card class="pa-5" elevation="2">
+              <v-row>
+                <v-col>
+                  <div class="pa-10">
+                    <v-row>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Arrive</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.departure_from }}
+                        </div>
+                      </v-col>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Departure Date</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.date_from }}
+                          {{ selectedItem.departure_time }}
+                        </div>
+                      </v-col>
+                      <!-- <v-col>
+                <div class="text-h5">
+                 <b> Class</b>
+                </div>
+                <div>
+                  {{$route.query.ticket_type}}
+                </div>
+              </v-col> -->
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Departure Date</b>
+                        </div>
+                        <div>
+                          {{ $route.query.depart }} {{ book.departure_time }}
+                        </div>
+                      </v-col>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Return Date</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.date_to }}
+                          {{ selectedItem.return_time }}
+                        </div>
+                      </v-col>
+                      <!-- <v-col>
+                <div class="text-h5">
+                 <b> Class</b>
+                </div>
+                <div>
+                  {{$route.query.ticket_type}}
+                </div>
+              </v-col> -->
+                    </v-row>
+                    <div>
+                      <v-img
+                        src="https://www.incimages.com/uploaded_files/image/1920x1080/*Barcode_32896.jpg"
+                        height="100"
+                        width="100"
+                      >
+                      </v-img>
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <v-col>
+            <img src="/images/logo.jpg" height="200" width="150" />
+          </v-col>
+        </v-row>
+
+        <v-divider></v-divider>
+      </section>
+    </VueHtml2pdf>
     <v-row>
       <v-col class="px-10" cols="6">
         <v-sheet height="80vh">
@@ -110,7 +212,10 @@
                     </v-btn>
                   </template>
                   <v-list dense>
-                    <v-list-item @click.stop="updateStatus(item,'Cancelled')">
+                    <v-list-item
+                      v-if="item.status != 'Approved'"
+                      @click.stop="updateStatus(item, 'Cancelled')"
+                    >
                       <v-list-item-content>
                         <v-list-item-title>Cancel</v-list-item-title>
                       </v-list-item-content>
@@ -118,6 +223,14 @@
                     <v-list-item @click.stop="deleteItem(item)">
                       <v-list-item-content>
                         <v-list-item-title>Delete</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item
+                      v-if="item.status == 'Approved'"
+                      @click.stop="generateTicket(item)"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>Generate Ticket</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -130,7 +243,9 @@
           <v-img src="/images/bookVector.jpg" height="450" width="650"></v-img>
         </div>
         <div align="center">
-          <v-btn color="secondary" @click="book" outlined class="rounded-lg">Book Now</v-btn>
+          <v-btn color="secondary" @click="book" outlined class="rounded-lg"
+            >Book Now</v-btn
+          >
         </div>
       </v-col>
     </v-row>
@@ -139,13 +254,18 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import VueHtml2pdf from "vue-html2pdf";
 export default {
-  computed:{
-       ...mapState("book", ["query_set"]),
+  components: {
+    VueHtml2pdf,
+  },
+  computed: {
+    ...mapState("book", ["query_set"]),
   },
   data() {
     return {
-      isLoading:false,
+      selectedItem: {},
+      isLoading: false,
       users: {
         name: "Jervin Macalawa",
         email: "jmacalawapersonal@gmail.com",
@@ -169,24 +289,27 @@ export default {
       ],
     };
   },
-  created(){
+  created() {
     this.loadItem();
   },
-  methods:{
-    updateStatus(item,status){
-
+  methods: {
+    generateTicket(item) {
+      console.log(item);
+      this.selectedItem = item;
+      this.$refs.html2Pdf.generatePdf();
     },
-   async loadItem(){
+    updateStatus(item, status) {},
+    async loadItem() {
       try {
-          await this.$store.dispatch('book/viewBookUser',{})
+        await this.$store.dispatch("book/viewBookUser", {});
       } catch (error) {
-          alert(error)
+        alert(error);
       }
     },
-    book(){
-      location="/schedules"
-    }
-  }
+    book() {
+      location = "/schedules";
+    },
+  },
 };
 </script>
 
