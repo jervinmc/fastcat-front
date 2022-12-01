@@ -899,6 +899,9 @@ export default {
         },
     async submitBook() {
       try {
+        if(this.$route.query.ticket_type='One Way'){
+          this.book.date_to = this.$route.query.depart
+        }
         await this.$store.dispatch("book/addBook", this.book);
         // alert("Successfully Booked!");
         // location = "/";
