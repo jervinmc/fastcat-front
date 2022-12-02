@@ -936,14 +936,23 @@ export default {
       this.book.departure_price = item.price;
     },
     async searchTripDeparture() {
-      await this.$store.dispatch(
+    if(this.$route.query.ticket_type=='One Way'){
+        await this.$store.dispatch(
         "departure/searchTripDeparture",
         this.$route.query.from
       );
-      await this.$store.dispatch(
+      return
+    }
+    else{
+       await this.$store.dispatch(
+        "departure/searchTripDeparture",
+        this.$route.query.from
+      );
+        await this.$store.dispatch(
         "return/searchTripReturn",
         this.$route.query.to
       );
+    }
     },
   },
   data() {

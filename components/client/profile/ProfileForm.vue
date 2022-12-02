@@ -13,7 +13,7 @@
       pdf-content-width="800px"
       ref="html2Pdf"
     >
-      <section slot="pdf-content">
+      <section slot="pdf-content" v-if="selectedItem.ticket_type=='One Way'">
         <v-row>
           <v-col>
             <v-row>
@@ -33,7 +33,7 @@
                           <b>Arrive</b>
                         </div>
                         <div>
-                          {{ selectedItem.departure_from }}
+                          {{ selectedItem.departure_to }}
                         </div>
                       </v-col>
                       <v-col>
@@ -98,7 +98,91 @@
             <img src="/images/logo.jpg" height="200" width="150" />
           </v-col>
         </v-row>
+        <div>
+             <img src="/barcode.png" height="100" width="500" />
+        </div>
+        <v-divider></v-divider>
+      </section>
+      <section slot="pdf-content" v-else>
+        <v-row>
+          <v-col>
+            <v-row>
+              <v-divider></v-divider>
+              <v-col align="center">
+                <div class="text-h4">Ship Ticket</div>
+              </v-col>
+            </v-row>
 
+            <v-card class="pa-5" elevation="2">
+              <v-row>
+                <v-col>
+                  <div class="pa-10">
+                    <v-row>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Arrive</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.departure_to }}
+                        </div>
+                      </v-col>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Departure Date</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.date_from }}
+                          {{ selectedItem.departure_time }}
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Departure Date</b>
+                        </div>
+                        <div>
+                          {{ $route.query.depart }} {{ book.departure_time }}
+                        </div>
+                      </v-col>
+                      <v-col>
+                        <div class="text-h5">
+                          <b>Return Date</b>
+                        </div>
+                        <div>
+                          {{ selectedItem.date_to }}
+                          {{ selectedItem.return_time }}
+                        </div>
+                      </v-col>
+                      <!-- <v-col>
+                <div class="text-h5">
+                 <b> Class</b>
+                </div>
+                <div>
+                  {{$route.query.ticket_type}}
+                </div>
+              </v-col> -->
+                    </v-row>
+                    <div>
+                      <v-img
+                        src="https://www.incimages.com/uploaded_files/image/1920x1080/*Barcode_32896.jpg"
+                        height="100"
+                        width="100"
+                      >
+                      </v-img>
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <v-col>
+            <img src="/images/logo.jpg" height="200" width="150" />
+          </v-col>
+        </v-row>
+        <div>
+             <img src="/barcode.png" height="100" width="500" />
+        </div>
         <v-divider></v-divider>
       </section>
     </VueHtml2pdf>
@@ -220,11 +304,11 @@
                         <v-list-item-title>Cancel</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click.stop="deleteItem(item)">
+                    <!-- <v-list-item @click.stop="deleteItem(item)">
                       <v-list-item-content>
                         <v-list-item-title>Delete</v-list-item-title>
                       </v-list-item-content>
-                    </v-list-item>
+                    </v-list-item> -->
                     <v-list-item
                       v-if="item.status == 'Approved'"
                       @click.stop="generateTicket(item)"
