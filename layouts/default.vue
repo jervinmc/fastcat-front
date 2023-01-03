@@ -203,6 +203,11 @@ export default {
           title: "Return",
           to: "/admin/return",
         },
+        {
+          icon: "mdi-chart-bubble",
+          title: "Report",
+          to: "/admin/report",
+        },
       ],
       miniVariant: false,
       right: true,
